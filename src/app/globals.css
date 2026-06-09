@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background-color: #05071a;
+  color: #eaf2ff;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+body {
+  font-family: var(--font-body), system-ui, sans-serif;
+  background-image:
+    radial-gradient(60% 40% at 80% 0%, rgba(255, 43, 209, 0.18), transparent 60%),
+    radial-gradient(50% 45% at 10% 10%, rgba(34, 224, 255, 0.16), transparent 60%),
+    radial-gradient(70% 50% at 50% 110%, rgba(155, 107, 255, 0.18), transparent 60%);
+  background-attachment: fixed;
+  min-height: 100dvh;
+}
+
+/* subtiele grain/texture */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.04;
+  z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.font-display {
+  font-family: var(--font-display), system-ui, sans-serif;
+}
+
+.glass {
+  background: rgba(16, 22, 64, 0.55);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.neon-text-cyan {
+  text-shadow: 0 0 12px rgba(34, 224, 255, 0.6);
+}
+.neon-text-pink {
+  text-shadow: 0 0 12px rgba(255, 43, 209, 0.6);
+}
+
+/* grote tap-knoppen */
+.btn {
+  @apply rounded-2xl font-bold text-lg py-4 px-5 transition active:scale-[0.97] text-center;
+}
+
+input,
+select,
+textarea {
+  font-size: 16px; /* voorkomt zoom op iOS */
+}
+
+::-webkit-scrollbar {
+  width: 0;
+}
