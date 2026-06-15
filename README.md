@@ -62,12 +62,10 @@ read/insert/delete voor `anon` toestaan (zit in het script).
 
 1. Push de map naar een GitHub-repo.
 2. Ga naar [vercel.com](https://vercel.com) → **Add New → Project** → kies de repo.
-3. **Environment Variables zijn optioneel.** De Supabase-gegevens zitten al ingebakken
-   in `src/lib/supabase.ts`, dus je hoeft niks in te stellen om te deployen. Wil je
-   afwijken, dan kun je toevoegen:
-   - `NEXT_PUBLIC_SUPABASE_URL` (anders de ingebakken waarde)
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` (anders de ingebakken waarde)
-   - `NEXT_PUBLIC_ADMIN_CODE` (anders standaard `ALBU2026`)
+3. **Geen Environment Variables nodig.** De Supabase-gegevens en de admincode
+   (`ALBU2026`) zitten vast ingebakken in `src/lib/supabase.ts` / `src/app/page.tsx`.
+   Zet géén `NEXT_PUBLIC_SUPABASE_*` in Vercel: een foute waarde daar breekt de
+   verbinding. Wil je een ander Supabase-project, pas dan de waarden in de code aan.
 4. **Deploy.** Vercel detecteert Next.js automatisch.
 5. Je krijgt een URL zoals `https://albufeira-challenge.vercel.app`.
 
