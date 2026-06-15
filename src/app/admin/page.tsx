@@ -5,6 +5,7 @@ import Shell from "@/components/Shell";
 import {
   adminAddChallenge,
   adminAdjustScore,
+  adminDeletePlayer,
   adminDeleteSubmission,
   adminGrantBadge,
   adminSetStatus,
@@ -181,6 +182,18 @@ function Admin() {
                 className="w-9 h-9 rounded-lg bg-navy-700 text-white font-bold"
               >
                 −
+              </button>
+              <button
+                onClick={async () => {
+                  if (confirm(`Speler "${s.name}" verwijderen? Al hun inzendingen, punten en spins gaan ook weg. Dit kan niet ongedaan worden gemaakt.`)) {
+                    await adminDeletePlayer(s.id);
+                    load();
+                  }
+                }}
+                className="w-9 h-9 rounded-lg bg-navy-700 text-neon-pink border border-neon-pink/40 font-bold"
+                title="Speler verwijderen"
+              >
+                🗑️
               </button>
             </div>
           ))}

@@ -193,6 +193,12 @@ export async function adminDeleteSubmission(submissionId: string) {
   if (error) throw error;
 }
 
+export async function adminDeletePlayer(playerId: string) {
+  // players heeft on delete cascade: inzendingen, badges, spins en straffen gaan mee.
+  const { error } = await supabase.from("players").delete().eq("id", playerId);
+  if (error) throw error;
+}
+
 export async function adminAdjustScore(playerId: string, delta: number) {
   const { data, error } = await supabase.from("players").select("score_adjustment").eq("id", playerId).single();
   if (error) throw error;
