@@ -38,7 +38,7 @@ Dit maakt in één keer:
 - de `player_scores` view (live score)
 - triggers: niet op je eigen inzending stemmen + auto goed/afkeuren bij 5 stemmen
 - RLS-policies
-- de 10 spelers, 40 challenges en de speeltijd
+- de 150 challenges en de speeltijd (spelers melden zichzelf aan met naam + teamnaam)
 - de **`proofs`** storage-bucket (publiek, max 50 MB, alleen toegestane bestandstypes)
 
 ### Storage voor foto + video (zit al in het script)
@@ -62,10 +62,12 @@ read/insert/delete voor `anon` toestaan (zit in het script).
 
 1. Push de map naar een GitHub-repo.
 2. Ga naar [vercel.com](https://vercel.com) → **Add New → Project** → kies de repo.
-3. Bij **Environment Variables** voeg toe (zelfde als `.env.local`):
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - `NEXT_PUBLIC_ADMIN_CODE`
+3. **Environment Variables zijn optioneel.** De Supabase-gegevens zitten al ingebakken
+   in `src/lib/supabase.ts`, dus je hoeft niks in te stellen om te deployen. Wil je
+   afwijken, dan kun je toevoegen:
+   - `NEXT_PUBLIC_SUPABASE_URL` (anders de ingebakken waarde)
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` (anders de ingebakken waarde)
+   - `NEXT_PUBLIC_ADMIN_CODE` (anders standaard `ALBU2026`)
 4. **Deploy.** Vercel detecteert Next.js automatisch.
 5. Je krijgt een URL zoals `https://albufeira-challenge.vercel.app`.
 
@@ -80,11 +82,11 @@ Deel de Vercel-link in de groepsapp. Iedereen kiest zijn naam en spelen maar.
 ## 4. Spelregels in de app
 
 - **1 dag.** Start- en eindtijd stel je in via het admin-paneel (tab *Instellingen*).
-- **40 challenges**, 4 niveaus: makkelijk (1), gemiddeld (3), heftig (5), legendarisch (10).
+- **150 challenges**, 4 niveaus: makkelijk (1), gemiddeld (3), heftig (5), legendarisch (10).
 - **Bewijs** = foto (jpg/png/webp) of video (mp4/mov/webm), max 50 MB.
 - **Voting:** elke andere speler kan goed-/afkeuren. **5x goedkeuren → automatisch punten.**
   Je kunt niet op je eigen inzending stemmen, en elke challenge dien je max 1x in.
-- **Roulette:** 1x draaien per speler voor bonuspunten.
+- **Roulette:** 1 spin per speler, plus 1 extra spin per 5 goedgekeurde challenges. Kan bonus óf strafpunten geven.
 - **Challenge van het uur:** admin zet er één in de spotlight → dubbele punten.
 - **Admin** (code invoeren op startscherm) kan: goedkeuren, afkeuren, uploads verwijderen,
   scores aanpassen, challenges toevoegen, beste video bekronen, speeltijd instellen en het spel sluiten.

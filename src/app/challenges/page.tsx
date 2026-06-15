@@ -1,8 +1,8 @@
 "use client";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Shell from "@/components/Shell";
-import { getChallenges, getClaimedChallenges, getAllSubmissions, getSettings, submitChallenge, validateFile } from "@/lib/data";
-import { Challenge, ClaimedChallenge, DIFFICULTY_META, Difficulty, Submission } from "@/lib/types";
+import { getChallenges, getAllSubmissions, getSettings, submitChallenge, validateFile } from "@/lib/data";
+import { Challenge, DIFFICULTY_META, Difficulty, Submission } from "@/lib/types";
 import { gamePhase, useNow } from "@/lib/hooks";
 
 const ORDER: Difficulty[] = ["makkelijk", "gemiddeld", "heftig", "legendarisch"];
@@ -14,7 +14,6 @@ export default function ChallengesPage() {
 function Challenges({ playerId }: { playerId: string }) {
   const now = useNow(30000);
   const [challenges, setChallenges] = useState<Challenge[]>([]);
-  const [claimed, setClaimed] = useState<ClaimedChallenge[]>([]);
   const [mySubs, setMySubs] = useState<Submission[]>([]);
   const [settings, setSettings] = useState(null as any);
   const [filter, setFilter] = useState<Difficulty | "alles">("alles");
@@ -22,21 +21,15 @@ function Challenges({ playerId }: { playerId: string }) {
 
   const load = useCallback(async () => {
     try {
-      const [ch, cl, allSubs, st] = await Promise.all([
-        getChallenges(), getClaimedChallenges(), getAllSubmissions(), getSettings()
+      const [ch, allSubs, st] = await Promise.all([
+        getChallenges(), getAllSubmissions(), getSettings()
       ]);
-      setChallenges(ch); setClaimed(cl); setSettings(st);
+      setChallenges(ch); setSettings(st);
       setMySubs(allSubs.filter(s => s.player_id === playerId));
     } catch {}
   }, [playerId]);
 
   useEffect(() => { load(); }, [load]);
-
-  const claimedMap = useMemo(() => {
-    const m = new Map<string, ClaimedChallenge>();
-    claimed.forEach(c => m.set(c.challenge_id, c));
-    return m;
-  }, [claimed]);
 
   const mySubMap = useMemo(() => {
     const m = new Map<string, Submission>();
@@ -46,12 +39,13 @@ function Challenges({ playerId }: { playerId: string }) {
 
   const phase = gamePhase(settings, now);
   const list = challenges.filter(c => filter === "alles" || c.difficulty === filter);
-  const claimedCount = claimed.length;
 
   return (
     <div className="px-4 pt-5">
       <h1 className="font-display text-2xl font-extrabold mb-1">🎯 Challenges</h1>
-      <p className="text-white/50 text-sm mb-3">{claimedCount}/{challenges.length} geclaimed. Wie eerst komt...</p>
+      <p className="text-white/50 text-sm mb-3">
+        {mySubs.filter(s => s.status === "goedgekeurd").length}/{challenges.length} goedgekeurd
+      </p>
 
       {phase !== "live" && (
         <div className="glass rounded-xl p-3 mb-3 text-sm text-neon-gold">
@@ -70,30 +64,23 @@ function Challenges({ playerId }: { playerId: string }) {
 
       <div className="space-y-2 mt-2">
         {list.map(c => {
-          const cl = claimedMap.get(c.id);
           const mySub = mySubMap.get(c.id);
           const meta = DIFFICULTY_META[c.difficulty];
-          const isClaimed = !!cl;
-          const isMine = cl?.claimed_by === (mySubs[0]?.player_id ? undefined : undefined); // name check
-          const canSubmit = !isClaimed && !mySub && phase === "live";
+          const canSubmit = !mySub && phase === "live";
 
           return (
             <button key={c.id} onClick={() => canSubmit && setActive(c)}
-              className={`w-full text-left rounded-2xl p-4 border bg-navy-800/40 ${meta.ring} ${
-                isClaimed ? "opacity-50" : ""
-              } ${canSubmit ? "active:scale-[0.98]" : ""}`}>
+              className={`w-full text-left rounded-2xl p-4 border bg-navy-800/40 ${meta.ring} ${canSubmit ? "active:scale-[0.98]" : ""}`}>
               <div className="flex items-start justify-between gap-2">
                 <span className="font-semibold leading-snug">{c.title}</span>
-                <span className={`text-xs font-display font-bold ${isClaimed ? "text-white/30" : meta.color} whitespace-nowrap`}>+{c.points}</span>
+                <span className={`text-xs font-display font-bold ${meta.color} whitespace-nowrap`}>+{c.points}</span>
               </div>
               <div className="flex items-center gap-2 mt-2">
-                <span className={`text-[11px] uppercase tracking-wide font-bold ${isClaimed ? "text-white/30" : meta.color}`}>{meta.label}</span>
+                <span className={`text-[11px] uppercase tracking-wide font-bold ${meta.color}`}>{meta.label}</span>
                 <span className="flex-1" />
-                {isClaimed ? (
-                  <span className="text-xs font-bold text-white/40">🔒 {cl.claimed_by}</span>
-                ) : mySub ? (
+                {mySub ? (
                   <span className={`text-xs font-bold ${mySub.status === "goedgekeurd" ? "text-neon-lime" : mySub.status === "afgekeurd" ? "text-neon-pink" : "text-neon-gold"}`}>
-                    {mySub.status === "goedgekeurd" ? "✅ Jij!" : mySub.status === "afgekeurd" ? "❌ Afgekeurd" : "⏳ Wacht op admin"}
+                    {mySub.status === "goedgekeurd" ? "✅ Goedgekeurd" : mySub.status === "afgekeurd" ? "❌ Afgekeurd" : "⏳ Wacht op admin"}
                   </span>
                 ) : phase === "live" ? (
                   <span className="text-xs text-white/40">open →</span>
@@ -141,7 +128,7 @@ function UploadModal({ playerId, challenge, onClose, onDone }: {
         <h2 className="font-display text-xl font-bold mt-1">{challenge.title}</h2>
         {preview && !isVideo && <img src={preview} alt="" className="w-full rounded-2xl mt-3 max-h-64 object-cover" />}
         {preview && isVideo && <video src={preview} controls className="w-full rounded-2xl mt-3 max-h-64 bg-black" />}
-        <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/webm" capture="environment" className="hidden"
+        <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/webm" className="hidden"
           onChange={e => pick(e.target.files?.[0] || null)} />
         <button onClick={() => fileRef.current?.click()} disabled={busy} className="btn bg-navy-700 text-white w-full mt-3 border border-white/10">
           📸 {file ? "Ander bewijs" : "Foto of video"}

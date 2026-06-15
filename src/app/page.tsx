@@ -51,7 +51,7 @@ export default function Start() {
           <span className="neon-text-cyan text-neon-cyan">ALBUFEIRA</span><br />
           <span className="neon-text-pink text-neon-pink">CHALLENGE</span>
         </h1>
-        <p className="text-white/50 text-sm mt-2">1 dag. 55 opdrachten. Wie claimt, scoort.</p>
+        <p className="text-white/50 text-sm mt-2">1 dag. 150 opdrachten. Wie durft, wint.</p>
       </div>
 
       {/* Naam */}

@@ -51,6 +51,12 @@ body::before {
 .neon-text-pink {
   text-shadow: 0 0 12px rgba(255, 43, 209, 0.6);
 }
+.neon-text-gold {
+  text-shadow: 0 0 12px rgba(255, 210, 58, 0.6);
+}
+.neon-text-violet {
+  text-shadow: 0 0 12px rgba(155, 107, 255, 0.6);
+}
 
 /* grote tap-knoppen */
 .btn {

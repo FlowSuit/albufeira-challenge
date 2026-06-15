@@ -2,7 +2,7 @@
 import { supabase, PROOF_BUCKET } from "./supabase";
 import type {
   Challenge, GameSettings, PlayerScore, TeamScore, Player,
-  Submission, StrafChallenge, Badge, RouletteSpin, ClaimedChallenge,
+  Submission, StrafChallenge, Badge, RouletteSpin,
 } from "./types";
 
 export const MAX_BYTES = 50 * 1024 * 1024; // 50 MB
@@ -64,13 +64,6 @@ export async function getAllSubmissions(): Promise<Submission[]> {
   const { data, error } = await supabase.from("submissions").select("*").order("created_at", { ascending: false });
   if (error) throw error;
   return data as Submission[];
-}
-
-// ── Claimed challenges ──
-export async function getClaimedChallenges(): Promise<ClaimedChallenge[]> {
-  const { data, error } = await supabase.from("claimed_challenges").select("*");
-  if (error) throw error;
-  return data as ClaimedChallenge[];
 }
 
 // ── File validation ──
